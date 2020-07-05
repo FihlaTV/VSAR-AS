@@ -73,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                wv.loadUrl("https://lvr.visar.co.za/");
+                wv.loadUrl("https://lvr.visar.co.za/ar.html");
             }
         });
         //setupEvents();
