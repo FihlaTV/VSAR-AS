@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
 
         });
 
-        String site = "https://visar.co.za/three.js/examples/css3d_molecules.html";
+        String site = "https://lvr.visar.co.za";
         Uri uri = Uri.parse(site);
         wv.loadUrl(site);
         // wv.loadUrl("file:///android_asset/index.html");
@@ -73,7 +73,7 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                wv.loadUrl("https://lvr.visar.co.za");
+                wv.loadUrl("https://lvr.visar.co.za/");
             }
         });
         //setupEvents();
