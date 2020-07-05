@@ -110,11 +110,11 @@ public class MainActivity extends AppCompatActivity {
     }
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
         if (wv.canGoBack()) {
             wv.goBack();
         } else {
-            super.onBackPressed();
+           // super.onBackPressed();
+            wv.loadUrl("https://lvr.visar.co.za");
         }
     }
 
