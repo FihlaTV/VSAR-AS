@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
 
         });
 
-        String site = "https://lvr.visar.co.za";
+        String site = "https://lvr.visar.co.za/index.html";
         Uri uri = Uri.parse(site);
         wv.loadUrl(site);
         // wv.loadUrl("file:///android_asset/index.html");
@@ -140,6 +140,12 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void clearCache(View view){
+        Toast.makeText(this, "Clear Cache", Toast.LENGTH_SHORT).show();
+        wv.clearCache(true);
+        wv.reload();
     }
     @Override
     public void onBackPressed() {
