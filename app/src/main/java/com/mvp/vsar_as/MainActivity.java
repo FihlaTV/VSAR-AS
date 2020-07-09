@@ -13,10 +13,13 @@ import com.google.android.material.snackbar.Snackbar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.view.MotionEvent;
 import android.view.View;
 
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.Window;
+import android.view.WindowManager;
 import android.webkit.JavascriptInterface;
 import android.webkit.PermissionRequest;
 import android.webkit.WebChromeClient;
@@ -34,8 +37,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+      /*  Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);*/
 
 
 
@@ -53,7 +56,10 @@ public class MainActivity extends AppCompatActivity {
         websettings.setMediaPlaybackRequiresUserGesture(false);
         websettings.setDomStorageEnabled(true);
         websettings.setPluginState(WebSettings.PluginState.ON);
-
+        websettings.setLoadWithOverviewMode(true);
+        websettings.setUseWideViewPort(true);
+        websettings.setBuiltInZoomControls(true);
+        websettings.setDisplayZoomControls(false);
         wv.setWebChromeClient(new WebChromeClient(){
             // Need to accept permissions to use the camera
             @Override
@@ -100,7 +106,7 @@ public class MainActivity extends AppCompatActivity {
         // Or for "sticky immersive," replace it with SYSTEM_UI_FLAG_IMMERSIVE_STICKY
         View decorView = getWindow().getDecorView();
         decorView.setSystemUiVisibility(
-                View.SYSTEM_UI_FLAG_IMMERSIVE
+                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
                         // Set the content to appear under the system bars so that the
                         // content doesn't resize when the system bars hide and show.
                         | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
@@ -120,14 +126,14 @@ public class MainActivity extends AppCompatActivity {
                         | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                         | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
     }
-    @Override
+   /* @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
-    }
+    }*/
 
-    @Override
+   /* @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
@@ -140,7 +146,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
-    }
+    }*/
 
     public void clearCache(View view){
         Toast.makeText(this, "Clear Cache", Toast.LENGTH_SHORT).show();
@@ -148,12 +154,23 @@ public class MainActivity extends AppCompatActivity {
         wv.reload();
     }
     @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        super.onTouchEvent(event);
+        float x = event.getX();
+        float y = event.getY();
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        setContentView(R.layout.activity_main);
+        return false;
+    }
+    @Override
     public void onBackPressed() {
         if (wv.canGoBack()) {
             wv.goBack();
         } else {
-           // super.onBackPressed();
-            wv.loadUrl("https://lvr.visar.co.za");
+            super.onBackPressed();
+          //  wv.loadUrl("https://lvr.visar.co.za");
         }
     }
 
