@@ -8,7 +8,7 @@ android {
         applicationId "com.mvp.vsar_as"
         minSdkVersion 22
         targetSdkVersion 29
-        versionCode 3
+        versionCode 4
         versionName "1.3"
         setProperty("archivesBaseName", "VISAR-AS-$versionName")
 

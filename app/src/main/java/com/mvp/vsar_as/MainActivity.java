@@ -182,6 +182,7 @@ public class MainActivity extends AppCompatActivity {
         if (wv.canGoBack()) {
             wv.goBack();
         } else {
+            wv.clearCache(true);
             super.onBackPressed();
           //  wv.loadUrl("https://lvr.visar.co.za");
         }
