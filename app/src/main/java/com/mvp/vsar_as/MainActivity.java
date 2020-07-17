@@ -5,6 +5,7 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -30,12 +31,15 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
     private WebView wv;
-
+    FloatingActionButton fab;
+    ProgressBar progressbar;
     @Override
     @SuppressLint("SetJavaScriptEnabled")
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,9 +49,8 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);*/
 
 
-
-
         wv = (WebView) findViewById(R.id.webView);
+        progressbar = findViewById(R.id.progressBar);
         wv.setWebViewClient(new WebViewClient());
         wv.setWebChromeClient(new WebChromeClient());
 
@@ -64,7 +67,8 @@ public class MainActivity extends AppCompatActivity {
         websettings.setUseWideViewPort(true);
         websettings.setBuiltInZoomControls(true);
         websettings.setDisplayZoomControls(false);
-        wv.setWebChromeClient(new WebChromeClient(){
+        websettings.setLoadsImagesAutomatically(true);
+        wv.setWebChromeClient(new WebChromeClient() {
             // Need to accept permissions to use the camera
             @Override
             public void onPermissionRequest(final PermissionRequest request) {
@@ -74,28 +78,54 @@ public class MainActivity extends AppCompatActivity {
             }
 
         });
-        if(ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, 1);
-        if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
-        if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
-        if(ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED)
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED)
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.INTERNET}, 1);
-        if(ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_NETWORK_STATE) != PackageManager.PERMISSION_GRANTED)
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_NETWORK_STATE) != PackageManager.PERMISSION_GRANTED)
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_NETWORK_STATE}, 1);
+
         String site = "https://lvr.visar.co.za/index.html";
         Uri uri = Uri.parse(site);
-        wv.loadUrl(site);
-        // wv.loadUrl("file:///android_asset/index.html");
-        FloatingActionButton fab = findViewById(R.id.fab);
+
+        fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 wv.loadUrl("https://lvr.visar.co.za/ar.html");
+                fab.hide();
             }
+
         });
         //setupEvents();
+        wv.loadUrl(site);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            wv.setOnScrollChangeListener(new View.OnScrollChangeListener() {
+                @Override
+                public void onScrollChange(View Webview, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
+                    if (scrollY > oldScrollY && scrollY > 0) {
+                        fab.hide();
+                    }
+                    if (scrollY < oldScrollY) {
+                        fab.hide();
+                    }
+                }
+
+            });
+            // wv.loadUrl("file:///android_asset/index.html");
+
+        wv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                fab.hide();
+            }
+        });
+        }
     }
      /*private void setupEvents() {
         final Button button = (Button) findViewById(R.id.button);
@@ -109,6 +139,7 @@ public class MainActivity extends AppCompatActivity {
      public void onWindowFocusChanged(boolean hasFocus) {
          super.onWindowFocusChanged(hasFocus);
          if (hasFocus) {
+
              hideSystemUI();
          }
      }
@@ -128,6 +159,7 @@ public class MainActivity extends AppCompatActivity {
                         // Hide the nav bar and status bar
                         | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                         | View.SYSTEM_UI_FLAG_FULLSCREEN);
+
     }
 
     // Shows the system bars by removing all the flags
@@ -175,6 +207,10 @@ public class MainActivity extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_main);
+        if(event.getAction()==MotionEvent.ACTION_DOWN){
+            fab.hide();
+
+        }
         return false;
     }
     @Override
@@ -183,6 +219,7 @@ public class MainActivity extends AppCompatActivity {
             wv.goBack();
         } else {
             wv.clearCache(true);
+            wv.reload();
             super.onBackPressed();
           //  wv.loadUrl("https://lvr.visar.co.za");
         }
@@ -214,7 +251,22 @@ public class MainActivity extends AppCompatActivity {
             return 42;
         }
     }
-
+    public class WebViewClient extends android.webkit.WebViewClient {
+        @Override
+        public void onPageStarted(WebView wv, String url, Bitmap favicon) {
+            super.onPageStarted(wv, url, favicon);
+        }
+        @Override
+        public boolean shouldOverrideUrlLoading(WebView wv, String url) {
+            wv.loadUrl(url);
+            return true;
+        }
+        @Override
+        public void onPageFinished(WebView wv, String url) {
+            super.onPageFinished(wv, url);
+            progressbar.setVisibility(View.GONE);
+        }
+    }
     /*
     Android interface
     */
